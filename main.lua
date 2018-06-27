@@ -44,7 +44,6 @@ physics.setGravity(0,0)
 	cenarioRodape = display.newRect(display.contentWidth*0.5,490, display.contentWidth, 100)
     cenarioRodape.strokeWidth = 1
 	cenarioRodape:setFillColor( 0.5,0.5,0.5 )
-	
 
 
 function movimentarCenario()
@@ -165,6 +164,12 @@ function recriarVertical(objeto)
 	
 end
 
+
+function decrementarVida()
+	cenariolioApagaLife.x  = cenariolioApagaLife.x - 14
+end
+
+
 function moverNaveEsquerda(event)
 
 	if event.phase == "began" then
@@ -204,8 +209,6 @@ function atirar(event)
 			--tiro[contTiro]:addEventListener("collision", verificarAcertoInimigo)
 			
 			tiro[contTiro]:setLinearVelocity(0,-100)
-
-		
 	end
 
 end
@@ -223,12 +226,22 @@ botaoDireita:addEventListener("touch", moverNaveDireita)
 botaoTiro = display.newImage("botaoTiro3.png", display.contentWidth*0.5, 480 )
 botaoTiro:addEventListener("touch", atirar)
 
+-- ================================================================================ --
+
 
 cenarioScore = display.newRect(display.contentWidth/2, 420, 350, 40 )
+cenarioLife = display.newImage("life.png", display.contentWidth - 40, 410 )
+cenariolioApagaLife = display.newRect(356,410,80,15)
+cenarioCombustivel = display.newImage("fuel.png", display.contentWidth - 40, 425)
+
+cenarioApagaCombustivel = display.newRect(300,425,80,4)
+cenarioApagaCombustivel:setFillColor( 0.5,0.5,0.5 )
+
+
+-- ================================================================================= --	
 
 
 nave = display.newImage("nave1.png", display.contentWidth*0.5, 380 )
-
 
 
 
