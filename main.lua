@@ -13,12 +13,12 @@ physics.setGravity(0,0)
 	
 -- ============================================================================================ --
 
-
-	inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
 	inimigo4 = display.newImage("inimigo4.png", (math.random (70, 250)),(math.random (-900, -60)))
 	inimigo4a = display.newImage("inimigo4a.png", (math.random (70, 250)), (math.random (-900, -60)) )
-	
-	
+
+
+	inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
+
 --============================================================================================= --
 	cenarioDireito = display.newImage("lateral1.jpg",290,100)
 	cenarioEsquerdo = display.newImage("lateral1.jpg", 30,100)
@@ -27,13 +27,17 @@ physics.setGravity(0,0)
 --============================================================================================== --
 
 
+
+	cenarioPedra1 = display.newImage("pedra1.png",( math.random (-20, 80)) , ( math.random (-100, 0)))
+	cenarioPedra2 = display.newImage("pedra2.png",( math.random (290, 300)) , ( math.random (-500, -100)))
+	cenarioPedra3 = display.newImage("pedra3.png",( math.random (-20, 50)) , ( math.random (-900, -500)))
+
+-- ============================================================================================== --
+
 	inimigo2 = display.newImage("inimigo2.png", -10, math.random (0, 350))
 	inimigo2a = display.newImage("inimigo2a.png", math.random (350, 950), math.random (0, 350))
 	inimigo3 = display.newImage("inimigo3.png",  -10 , math.random (0, 350))
 	inimigo3a = display.newImage("inimigo3a.png",  350 , math.random (0, 350))
-	cenarioPedraEsquerda = display.newImage("pedra.png",( math.random (0, 65)) , ( math.random (-300, -50)))
-
-
 
 --=============================================================================================== --
 
@@ -44,12 +48,16 @@ physics.setGravity(0,0)
 
 
 function movimentarCenario()
+	velocidadeCenario = 0.2
+
 	for i = 1, 5 do
-		cenarioEsquerdo.y = cenarioEsquerdo.y + 0.1
-		cenarioDireito.y = cenarioDireito.y + 0.1
-		inimigo4.y = inimigo4.y +0.1
-		inimigo4a.y = inimigo4a.y +0.1
-		cenarioPedraEsquerda.y = cenarioPedraEsquerda.y +0.1
+		cenarioEsquerdo.y = cenarioEsquerdo.y + velocidadeCenario
+		cenarioDireito.y = cenarioDireito.y + velocidadeCenario
+		inimigo4.y = inimigo4.y + velocidadeCenario
+		inimigo4a.y = inimigo4a.y + velocidadeCenario
+		cenarioPedra1.y = cenarioPedra1.y + velocidadeCenario
+		cenarioPedra2.y = cenarioPedra2.y + velocidadeCenario
+		cenarioPedra3.y = cenarioPedra3.y + velocidadeCenario
 	end
 	
 	if cenarioEsquerdo.y >= 850 then
@@ -67,12 +75,21 @@ function movimentarCenario()
 end
 
 function recriarCenario(objeto) 
-
 	objeto.y = -500
-
-
 end
 
+function inserirObjetoCenario(objeto)
+	
+	if(objeto.y >= 500) then
+		objeto.y = ( math.random (-500, -50))
+		
+		if objeto.x <=200 then
+			objeto.x= (math.random (290,350))
+		else 
+			objeto.x =( math.random (-20, 40))
+		end
+	end
+end
 
 
 function movimentarinimigo()
@@ -104,8 +121,12 @@ function movimentarinimigo()
 		recriarDiagonalReverso(inimigo3a)
 	end
 
-	if cenarioPedraEsquerda.y >= 500 then
-		recriarVertical(cenarioPedraEsquerda)
+	if cenarioPedra1.y >= 500 then
+		inserirObjetoCenario(cenarioPedra1)
+
+	end
+	if cenarioPedra2.y >= 500 then
+		inserirObjetoCenario(cenarioPedra2)
 
 	end
 
@@ -190,6 +211,7 @@ function atirar(event)
 end
 
 
+-- ==================================================================== --
 
 botaoEsquerda = display.newImage ("botaoEsquerda.png", 50, 480 )
 botaoEsquerda:addEventListener("touch", moverNaveEsquerda)
@@ -211,7 +233,7 @@ nave = display.newImage("nave1.png", display.contentWidth*0.5, 380 )
 
 
 
----------------------------------------------------------------------
+-- ================================================================================ --
 
 descerCenario = timer.performWithDelay(10, movimentarCenario,0) 
 
