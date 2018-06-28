@@ -24,7 +24,6 @@ end
 
 -- =========================================================================================== --
 
-
 function iniciarJogo(event)
 	
 	-- if (event.phase == "began") then
@@ -80,8 +79,12 @@ function iniciarJogo(event)
 
 			nave = display.newImage("nave1.png", display.contentWidth/2, 380)
 
+
+			---------------------------------------------------------------
 			descerCenario = timer.performWithDelay(10, movimentarCenario,0) 
 			movimentoInimigos = timer.performWithDelay(10, movimentarinimigo,0)
+			incrementoScore = timer.performWithDelay(1000,incrementarScore,0)
+			---------------------------------------------------------------
 
 			botaoEsquerda:addEventListener("touch", moverNaveEsquerda)
 			botaoDireita:addEventListener("touch", moverNaveDireita)
@@ -91,17 +94,77 @@ function iniciarJogo(event)
 			cenarioBarraScore = display.newImage("barraScore.png", display.contentWidth/2+10 	, 424)
 			cenarioScore = display.newImage("score.png", 62,423)
 
+
+		
 			--	end
 
 	
 
 end
+
+
 -- =========================================================================================== --
 
 
-function limparAbrirJogo()
+function exibirPontuacao()
+
+    local options = 
+    {
+        text = scoreAtual,     
+        x = display.actualContentWidth/2-25,
+        y = 425,
+        width = 130,
+        font = native.systemFont,   
+        fontSize = 20,
+        align = "right"
+    }
+    local pontuacaoText = display.newText(options )
+    pontuacaoText:setFillColor( 00.1, 0.1, 0.1 )
+           
+
+end
+
+-- ============================================================= --
+function apagarPlacarantigo()	
+	pontuacaoText:removeSelf()
+end
+
+function incrementarScore()
+	
 
 	
+	if(scoreAtual<=999999)then
+		scoreAtual = scoreAtual + 10
+	else
+		zerouJogo()
+	end
+	exibirPontuacao()
+end
+
+-- ============================================================= --
+
+function zerouJogo()
+
+	zerouJogo = display.newImage("highScore.png", display.actualContentWidth/2,200)
+
+    local options = 
+    {
+        text = scoreAtual,     
+        x = display.actualContentWidth/2,
+        y = 350,
+        width = 130,
+        font = native.systemFont,   
+        fontSize = 30,
+        align = "center"
+    }
+    local myText = display.newText(options )
+    myText:setFillColor( 0.9, 0.6, 00.2 )
+           
+end
+-- ============================================================= --
+
+function limparAbrirJogo()
+
 		botaoSim:removeSelf()
 		botaoNao:removeSelf()
 		fundo:removeSelf()
@@ -115,17 +178,15 @@ end
 function gameOver()
 	if scoreAtual > hiScore then
 		hiScore = scoreAtual
-
 	end
 end
 -- =============================================================================================== --
 
 function movimentarCenario()
 	
-	velocidadeCenario = 0.1
+	velocidadeCenario = 0.2
 	
 	for i = 1, 5 do
-
 		cenarioEsquerdo.y = cenarioEsquerdo.y + velocidadeCenario
 		cenarioDireito.y = cenarioDireito.y + velocidadeCenario
 		addFuel.y= addFuel.y +velocidadeCenario
@@ -133,8 +194,11 @@ function movimentarCenario()
 		cenarioPedra2.y = cenarioPedra2.y + velocidadeCenario
 		cenarioPedra3.y = cenarioPedra3.y + velocidadeCenario
 		
+		
 		if(vidas >=1)then
-			cenarioApagaCombustivel.x = cenarioApagaCombustivel.x - 0.04
+			cenarioApagaCombustivel.x = cenarioApagaCombustivel.x - 0.005
+			
+			
 		else
 		--abrirJogo()
 		end
@@ -192,6 +256,7 @@ function movimentarinimigo()
 		inimigo3a.y = inimigo3a.y + 0.1
 		inimigo4.y = inimigo4.y + 0.1
 		inimigo4a.y = inimigo4a.y + 0.1
+
 	end
 
 	if inimigo1.y >= 400 then
@@ -332,3 +397,5 @@ function atirar(event)
 end
 
 iniciarJogo()
+
+
