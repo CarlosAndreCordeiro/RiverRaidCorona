@@ -2,43 +2,26 @@
 local physics = require( "physics" )
 physics.start()
 physics.setGravity(0,0)
+physics.setDrawMode("hybrid")
 
 vidas = 5
 
 scoreAtual = 0
 hiScore = 0
 
--- =========================================================================================== --
-
-function abrirJogo()
-
-	fundo = display.newImage("fundo.png", display.contentWidth/2, 235)
-	inicio = display.newImage("inicio.png", display.contentWidth /2+4, 160)
-	botaoSim = display.newImage("botaoSim.png",100 ,220)
-	botaoSim:addEventListener("touch", iniciarJogo)
-
-	botaoNao = display.newImage("botaoNao.png", 230,220)
-	botaoNao:addEventListener("touch", limparAbrirJogo)
-
-end
+-- =========================================================================================== 
 
 -- =========================================================================================== --
 
-function iniciarJogo(event)
+function criarCenario(event)
 	
-	-- if (event.phase == "began") then
-	--	limparAbrirJogo()  
+	 if (event.phase == "began") then
+			limparAbrirJogo()  
 			cenarioCentral = display.newRect(display.contentWidth*0.5, 100,200,600)
 			cenarioCentral.strokeWidth = 0
 			cenarioCentral:setFillColor( 0,0,1 )
 
 			addFuel = display.newImage("addFuel.png", math.random(70,250), -300)
-			
-			inimigo4 = display.newImage("inimigo4.png", (math.random (70, 250)),(math.random (-900, -60)))
-			inimigo4a = display.newImage("inimigo4a.png", (math.random (70, 250)), (math.random (-900, -60)) )
-			inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
-
-		
 			cenarioDireito = display.newImage("lateral1.jpg",290,100)
 			cenarioEsquerdo = display.newImage("lateral1.jpg", 30,100)
 			
@@ -48,44 +31,28 @@ function iniciarJogo(event)
 			cenarioPedra3 = display.newImage("pedra3.png",( math.random (-10, 50)) , ( math.random (-600, -200)))
 
 
-			inimigo2 = display.newImage("inimigo2.png", -10, math.random (0, 350))
-			inimigo2a = display.newImage("inimigo2a.png", math.random (350, 950), math.random (0, 350))
-			inimigo3 = display.newImage("inimigo3.png",  -10 , math.random (0, 350))
-			inimigo3a = display.newImage("inimigo3a.png",  350 , math.random (0, 350))
-
-
 			cenarioRodape = display.newRect(display.contentWidth*0.5,490, display.contentWidth, 100)
 			cenarioRodape.strokeWidth = 1
 			cenarioRodape:setFillColor( 0,0,0 )
 
 
 			botaoEsquerda = display.newImage ("botaoEsquerda.png", 50, 480 )
-			
-			botaoDireita = display.newImage("botaoDireita.png",270, 480 )
-			
+			botaoDireita = display.newImage("botaoDireita.png",270, 480 )			
 			botaoTiro = display.newImage("botaoTiro3.png", display.contentWidth*0.5, 480 )
 
 			cenarioScore = display.newRect(display.contentWidth/2, 420, 350, 40 )
 			cenarioScore:setFillColor( 0,0,0 )
-
-
 			cenarioLife = display.newImage("life.png", display.contentWidth - 40, 410 )
 			cenariolioApagaLife = display.newRect(356,410,80,15)
 			cenariolioApagaLife:setFillColor(0,0,0)
 			cenarioCombustivel = display.newImage("fuel.png", display.contentWidth - 35, 428)
-
 			cenarioApagaCombustivel = display.newRect(360,428,80,8)
 			cenarioApagaCombustivel:setFillColor( 01,0.5,0.5 )
 
 			nave = display.newImage("nave1.png", display.contentWidth/2, 380)
+			physics.addBody(nave, "static")
 
-
-			---------------------------------------------------------------
-			descerCenario = timer.performWithDelay(10, movimentarCenario,0) 
-			movimentoInimigos = timer.performWithDelay(10, movimentarinimigo,0)
-			incrementoScore = timer.performWithDelay(1000,incrementarScore,0)
-			---------------------------------------------------------------
-
+			
 			botaoEsquerda:addEventListener("touch", moverNaveEsquerda)
 			botaoDireita:addEventListener("touch", moverNaveDireita)
 			botaoTiro:addEventListener("touch", atirar)		
@@ -94,18 +61,36 @@ function iniciarJogo(event)
 			cenarioBarraScore = display.newImage("barraScore.png", display.contentWidth/2+10 	, 424)
 			cenarioScore = display.newImage("score.png", 62,423)
 
+	-------------------------------------------------------------------------------
+			descerCenario = timer.performWithDelay(10, movimentarCenario,0) 
+			--movimentoInimigos = timer.performWithDelay(10, movimentarinimigo,0)
+			--incrementoScore = timer.performWithDelay(1000,incrementarScore,0)
+	-------------------------------------------------------------------------------
 
-		
-			--	end
+	criarInimigo()
+	end
+end
 
-	
+function criarInimigo()
+--	inimigo4 = display.newImage("inimigo4.png", (math.random (70, 250)),(math.random (-900, -60)))
+--	inimigo4a = display.newImage("inimigo4a.png", (math.random (70, 250)), (math.random (-900, -60)) )
+--	inimigo2 = display.newImage("inimigo2.png", -10, math.random (0, 350))
+--	inimigo2a = display.newImage("inimigo2a.png", math.random (350, 950), math.random (0, 350))
+--	inimigo3 = display.newImage("inimigo3.png",  -10 , math.random (0, 350))
+--	inimigo3a = display.newImage("inimigo3a.png",  350 , math.random (0, 350))
+
+
+	inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
+	physics.addBody(inimigo1)
+	inimigo1:setLinearVelocity(0, 100)
 
 end
 
-
+gerarInimigo = timer.performWithDelay(3000, criarInimigo,0)
 -- =========================================================================================== --
 
-
+local pontuacaoText = display.newText("0",0,0)
+   
 function exibirPontuacao()
 
     local options = 
@@ -118,26 +103,21 @@ function exibirPontuacao()
         fontSize = 20,
         align = "right"
     }
-    local pontuacaoText = display.newText(options )
-    pontuacaoText:setFillColor( 00.1, 0.1, 0.1 )
-           
+	pontuacaoText.isVisible = false
+	pontuacaoText = display.newText(options )
+   
+	pontuacaoText:setFillColor( 00.1, 0.1, 0.1 )
 
 end
 
 -- ============================================================= --
 function apagarPlacarantigo()	
-	pontuacaoText:removeSelf()
+	
 end
 
 function incrementarScore()
-	
-
-	
-	if(scoreAtual<=999999)then
-		scoreAtual = scoreAtual + 10
-	else
-		zerouJogo()
-	end
+		
+	scoreAtual = scoreAtual + 100
 	exibirPontuacao()
 end
 
@@ -167,7 +147,7 @@ function limparAbrirJogo()
 
 		botaoSim:removeSelf()
 		botaoNao:removeSelf()
-		fundo:removeSelf()
+		--fundo:removeSelf()
 		inicio:removeSelf()
 	
 end
@@ -184,25 +164,35 @@ end
 
 function movimentarCenario()
 	
-	velocidadeCenario = 0.2
+	velocidadeCenario = 1
 	
-	for i = 1, 5 do
+	
 		cenarioEsquerdo.y = cenarioEsquerdo.y + velocidadeCenario
 		cenarioDireito.y = cenarioDireito.y + velocidadeCenario
 		addFuel.y= addFuel.y +velocidadeCenario
 		cenarioPedra1.y = cenarioPedra1.y + velocidadeCenario
 		cenarioPedra2.y = cenarioPedra2.y + velocidadeCenario
 		cenarioPedra3.y = cenarioPedra3.y + velocidadeCenario
-		
-		
-		if(vidas >=1)then
-			cenarioApagaCombustivel.x = cenarioApagaCombustivel.x - 0.005
-			
-			
-		else
-		--abrirJogo()
+	
+		if cenarioPedra1.y >= 500 then
+			inserirObjetoCenario(cenarioPedra1)
+	
 		end
-	end
+		if cenarioPedra2.y >= 500 then
+			inserirObjetoCenario(cenarioPedra2)
+		end
+		if cenarioApagaCombustivel.x <=280 then
+			cenarioApagaCombustivel.x = 360
+			decrementarVida()
+		end
+	
+		if(vidas >=1)then
+			cenarioApagaCombustivel.x = cenarioApagaCombustivel.x - 0.05
+		else
+		abrirJogo()
+		end
+	
+		
 	
 	if addFuel.y >500 then
 		recriarVertical(addFuel)
@@ -244,58 +234,13 @@ end
 -- =============================================================================== --
 
 
-function movimentarinimigo()
+--function movimentarinimigo()
 
-	for i = 1, 5 do
-		inimigo1.y = inimigo1.y + 0.25
-		inimigo2.x = inimigo2.x + 0.15
-		inimigo2a.x = inimigo2a.x - 0.15
-		inimigo3.x = inimigo3.x + 0.3
-		inimigo3.y = inimigo3.y + 0.2
-		inimigo3a.x = inimigo3a.x - 0.1
-		inimigo3a.y = inimigo3a.y + 0.1
-		inimigo4.y = inimigo4.y + 0.1
-		inimigo4a.y = inimigo4a.y + 0.1
-
-	end
-
-	if inimigo1.y >= 400 then
-		recriarVertical(inimigo1)
-	end
-	if inimigo2.x >= 500 then
-		recriarHorizontal(inimigo2) 
-	end
-	if inimigo2a.x <= -200 then
-		recriarHorizontalReverso(inimigo2a)
-	end
-	if inimigo3.y >= 500 then
-		recriarDiagonal(inimigo3)
-	end
-
-	if inimigo3a.y >= 500 then
-		recriarDiagonalReverso(inimigo3a)
-	end
-
-	if cenarioPedra1.y >= 500 then
-		inserirObjetoCenario(cenarioPedra1)
-
-	end
-	if cenarioPedra2.y >= 500 then
-		inserirObjetoCenario(cenarioPedra2)
-	end
-	if cenarioApagaCombustivel.x <=280 then
-		cenarioApagaCombustivel.x = 360
-		decrementarVida()
-	end
-
-	if inimigo4.y >= 400 then
-		recriarVertical(inimigo4)
-	end
-
-	if inimigo4a.y >= 400 then
-		recriarCenario(inimigo4a)
-	end
-end
+--	if inimigo1 ~= nil then
+--	inimigo1.y = inimigo1.y + 1.9
+--	end
+		
+--end
 
 
 -- =============================================================================== --
@@ -391,11 +336,33 @@ function atirar(event)
 			tiro[contTiro].id = contTiro
 			
 			physics.addBody(tiro[contTiro])
-			--tiro[contTiro]:addEventListener("collision", verificarAcertoInimigo)
 			tiro[contTiro]:setLinearVelocity(0,-100)
+			tiro[contTiro]:addEventListener("collision", matarInimigo)
 	end
 end
 
-iniciarJogo()
+function matarInimigo(event)
+
+	display.remove(event.target)
+	
+	display.remove(event.other)
+	inimigo1 = nil
+	incrementarScore()
+
+end
 
 
+function abrirJogo()
+
+	inicio = display.newImage("inicio.png", display.contentWidth /2+4, 160)
+	
+	botaoSim = display.newImage("botaoSim.png",100 ,220)
+	botaoSim:addEventListener("touch", criarCenario)
+	
+	botaoNao = display.newImage("botaoNao.png", 230,220)
+	botaoNao:addEventListener("touch", limparAbrirJogo)
+
+end
+
+--
+abrirJogo()
