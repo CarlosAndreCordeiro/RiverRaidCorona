@@ -13,6 +13,15 @@ hiScore = 0
 
 -- =========================================================================================== --
 
+function gerarFuel( )
+	addFuel = display.newImage("addFuel.png", math.random(70,250), -300)
+	physics.addBody(addFuel)
+	addFuel:addEventListener("collision", adicionarVida)
+	addFuel:setLinearVelocity(0,50)
+end
+
+gerarGasolina = timer.performWithDelay(5000, gerarFuel,0)
+
 function criarCenario(event)
 	
 	 if (event.phase == "began") then
@@ -21,7 +30,8 @@ function criarCenario(event)
 			cenarioCentral.strokeWidth = 0
 			cenarioCentral:setFillColor( 0,0,1 )
 
-			addFuel = display.newImage("addFuel.png", math.random(70,250), -300)
+			
+
 			cenarioDireito = display.newImage("lateral1.jpg",290,100)
 			cenarioEsquerdo = display.newImage("lateral1.jpg", 30,100)
 			
@@ -51,6 +61,7 @@ function criarCenario(event)
 
 			nave = display.newImage("nave1.png", display.contentWidth/2, 380)
 			physics.addBody(nave, "static")
+			nave:addEventListener("collision", decrementarVida)
 
 			
 			botaoEsquerda:addEventListener("touch", moverNaveEsquerda)
@@ -83,6 +94,7 @@ function criarInimigo()
 	inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
 	physics.addBody(inimigo1)
 	inimigo1:setLinearVelocity(0, 100)
+	--inimigo1:addEventListener("collision", decrementarVida)
 
 end
 
@@ -169,7 +181,7 @@ function movimentarCenario()
 	
 		cenarioEsquerdo.y = cenarioEsquerdo.y + velocidadeCenario
 		cenarioDireito.y = cenarioDireito.y + velocidadeCenario
-		addFuel.y= addFuel.y +velocidadeCenario
+		--addFuel.y= addFuel.y +velocidadeCenario
 		cenarioPedra1.y = cenarioPedra1.y + velocidadeCenario
 		cenarioPedra2.y = cenarioPedra2.y + velocidadeCenario
 		cenarioPedra3.y = cenarioPedra3.y + velocidadeCenario
@@ -191,13 +203,6 @@ function movimentarCenario()
 		else
 		abrirJogo()
 		end
-	
-		
-	
-	if addFuel.y >500 then
-		recriarVertical(addFuel)
-
-	end
 
 
 	if cenarioEsquerdo.y >= 850 then
@@ -282,24 +287,38 @@ function recriarVertical(objeto)
 end
 -- =========================================================================================== --
 
-function adicionarVida()
-	if (vidas < 5) then
-		cenariolioApagaLife.x = cenariolioApagaLife.x + 15
-		vidas = vidas+1 
-	end
+function adicionarVida(event)
+		print("Adicionou a vida")
+		
+		display.remove(event.target)
+		addFuel = nil
+		if event.phase == "began" then
+			if vidas < 5 then
+			cenariolioApagaLife.x = cenariolioApagaLife.x + 15
+			vidas = vidas+1 
+			end
+		end
+		
+		print("Quantidade de vida: " .. vidas)
 
 end
 
+
 -- =========================================================================================== --
 
-function decrementarVida()
-	if(vidas >= 1) then
-		cenariolioApagaLife.x  = cenariolioApagaLife.x - 15
-		vidas = vidas -1
-	else
-	abrirJogo()
+function decrementarVida(event)
+		
+		display.remove(event.other)
+		--inimigo1 = nil
+		addFuel = nil
+		if event.phase == "began" then
+			if vidas > 0 then
+				cenariolioApagaLife.x = cenariolioApagaLife.x - 15
+				vidas = vidas - 1
+			end
+		end
+	print("Quantidade de vidas: ".. vidas)
 	
-	end
 end
 
 -- =========================================================================================== --
@@ -332,7 +351,7 @@ function atirar(event)
 		
 			local contTiro = #tiro+1
 			
-			tiro[contTiro] = display.newRect(nave.x,nave.y-15,5,3)
+			tiro[contTiro] = display.newRect(nave.x,nave.y-25,5,3)
 			tiro[contTiro].id = contTiro
 			
 			physics.addBody(tiro[contTiro])
