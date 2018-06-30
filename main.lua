@@ -8,7 +8,6 @@ scoreAtual = 0
 hiScore = 0
 
 -- =========================================================================================== --
-
 local pontuacaoText = display.newText("0",0,0)
 function exibirPontuacao()
     local options = 
@@ -26,20 +25,46 @@ function exibirPontuacao()
 	pontuacaoText:setFillColor( 00.1, 0.1, 0.1 )
 end
 
-
 function incrementarScore()
 	scoreAtual = scoreAtual + 100
 	exibirPontuacao()
 end
-
 -- =========================================================================================== --
 
-function adicionarVida(event)
-	print("Adicionou uma vida " .. vidas)
+function somarVidaPorColisao(event)
 	display.remove(event.target)
 	addFuel = nil
 	somarVida()
 end
+
+function somarVida ()
+	if (vidas < 5) then
+		vidas = vidas +1
+		print("Quantidade de vidas agora é: => " .. vidas)
+		cenarioApagaLife.x = cenarioApagaLife.x +15 
+	end
+end
+
+
+
+function gastarCombustivel() 
+	if (vidas >=1) then
+		cenarioApagaCombustivel.x = cenarioApagaCombustivel.x-0.1
+		if(cenarioApagaCombustivel.x <=280) then
+			cenarioApagaCombustivel.x = 360
+			perderVida()
+		end
+
+	end
+end
+
+
+function morrerPorColisao(event)
+		display.remove(event.other)
+		inimigo1 = nil
+		perderVida()				
+end
+
 
 function perderVida()
 	
@@ -48,23 +73,21 @@ function perderVida()
 		cenarioApagaLife.x = cenarioApagaLife.x -15 
 		print("Quantidade de vidas agora é: " .. vidas)
 	else
-		print ("vidas esgotadas quantidade:> " ..  vidas)
+		vidas= vidas-1
+		print ("Game Over: Vidas => " ..  vidas)
+		
+		if(cenarioApagaCombustivel.x >= 280) then
+			cenarioApagaLife.x = cenarioApagaLife.x -15
+		end
+
+	
+		gameOver()
 	end
 end
 
-function somarVida ()
-	if vidas < 5 then
-		vidas = vidas +1
-		cenarioApagaLife.x = cenarioApagaLife.x +15 
-	end
-end
+function gameOver()
 
-function morrerPorColisao(event)
-		display.remove(event.other)
-		inimigo1 = nil
-		perderVida()				
 end
-
 
 
 
@@ -112,7 +135,7 @@ end
 function gerarFuel( )
 	addFuel = display.newImage("addFuel.png", math.random(70,250), -300)
 	physics.addBody(addFuel)
-	addFuel:addEventListener("collision", adicionarVida)
+	addFuel:addEventListener("collision", somarVidaPorColisao)
 	addFuel:setLinearVelocity(0,100)
 end
 -- =========================================================================================== --
@@ -166,18 +189,7 @@ function mudarLadoX(objeto)
 	end
 end
 
-function gastarCombustivel() 
-	if (vidas >=1) then
-		cenarioApagaCombustivel.x = cenarioApagaCombustivel.x-0.1
-		if(cenarioApagaCombustivel.x <=280) then
-			cenarioApagaCombustivel.x = 360
-			perderVida()
-		end
-		
-	end
 
-
-end
 
 
 -- =========================================================================================== --
