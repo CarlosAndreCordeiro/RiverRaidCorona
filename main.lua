@@ -40,8 +40,10 @@ end
 function somarVida ()
 	if (vidas < 5) then
 		vidas = vidas +1
-		print("Quantidade de vidas agora é: => " .. vidas)
-		cenarioApagaLife.x = cenarioApagaLife.x +15 
+		print("Ganhou uma Vida, sua quantidade de vidas agora é: => " .. vidas)
+		if(cenarioApagaLife.x <356)then
+			cenarioApagaLife.x = cenarioApagaLife.x +15 
+		end
 	end
 end
 
@@ -67,25 +69,27 @@ end
 
 
 function perderVida()
-	
-	if (vidas > 1) then
+	if (vidas >= 1) then
 		vidas = vidas-1
+		print("Perdeu vida, suas vidas é: => " .. vidas)
 		cenarioApagaLife.x = cenarioApagaLife.x -15 
-		print("Quantidade de vidas agora é: " .. vidas)
-	else
-		vidas= vidas-1
-		print ("Game Over: Vidas => " ..  vidas)
 		
-		if(cenarioApagaCombustivel.x >= 280) then
-			cenarioApagaLife.x = cenarioApagaLife.x -15
-		end
-
-	
+	else
+		
 		gameOver()
 	end
 end
 
+
+
 function gameOver()
+	print ("Game Over: Vidas => " ..  vidas)
+
+	botaoEsquerda = nil
+	botaoDireita = nil
+	botaoTiro = nil
+	display.remove(botaoEsquerda)
+	display.remove(botaoDireita)
 
 end
 
@@ -133,14 +137,14 @@ end
 
 
 function gerarFuel( )
-	addFuel = display.newImage("addFuel.png", math.random(70,250), -300)
+	addFuel = display.newImage("addFuel.png", math.random(70,250), math.random(-900,-100))
 	physics.addBody(addFuel)
 	addFuel:addEventListener("collision", somarVidaPorColisao)
 	addFuel:setLinearVelocity(0,100)
 end
 -- =========================================================================================== --
 
-function criarInimigo()
+function gerarInimigo()
 	--	inimigo4 = display.newImage("inimigo4.png", (math.random (70, 250)),(math.random (-900, -60)))
 	--	inimigo4a = display.newImage("inimigo4a.png", (math.random (70, 250)), (math.random (-900, -60)) )
 	--	inimigo2 = display.newImage("inimigo2.png", -10, math.random (0, 350))
@@ -159,28 +163,21 @@ function descerCenario()
 	if(cenarioSuperior.y >= 400) then
 		cenarioSuperior.y = 50
 	end
-	
 	cenarioPedra1.y = cenarioPedra1.y +1
 	if(cenarioPedra1.y >=450)then
 		mudarLadoX(cenarioPedra1)
 	end
-
-	
 	cenarioPedra2.y = cenarioPedra2.y +1
 	if(cenarioPedra2.y >=450)then
 		mudarLadoX(cenarioPedra2)
 	end
-
-	
 	cenarioPedra3.y = cenarioPedra3.y +1
 	if(cenarioPedra3.y >=450)then
 		mudarLadoX(cenarioPedra3)
 	end
 end
 
-
 function mudarLadoX(objeto)
-
 	objeto.y = (math.random(-500,-50))
 	if (objeto.x <=30) then
 		objeto.x = math.random(290,330)
@@ -190,11 +187,9 @@ function mudarLadoX(objeto)
 end
 
 
-
-
 -- =========================================================================================== --
-decerCenario = timer.performWithDelay(10, descerCenario,0)
-gerarInimigo = timer.performWithDelay(1000, criarInimigo,0)
+deceCenario = timer.performWithDelay(10, descerCenario,0)
+geraInimigo = timer.performWithDelay(5000, gerarInimigo,0)
 geraFuel = timer.performWithDelay(5000, gerarFuel,0)
 gastaCombustivel = timer.performWithDelay(10, gastarCombustivel,0)
 -- =========================================================================================== --
@@ -210,6 +205,7 @@ cenarioInferior = display.newImage("cenarioInferior.png",display.actualContentWi
 
 cenarioApagaCombustivel = display.newRect(360,428,80,8)
 cenarioApagaCombustivel:setFillColor( 01,0.5,0.5 )
+
 cenarioApagaLife = display.newRect(356,410,80,15)
 cenarioApagaLife:setFillColor(0,0,0)
 -- =========================================================================================== --
