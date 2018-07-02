@@ -3,18 +3,18 @@ local physics = require( "physics" )
 physics.start()
 physics.setGravity(0,0)
 --physics.setDrawMode("hybrid")
-vidas = 5
-scoreAtual = 0
-hiScore = 0
 
--- =========================================================================================== --
+
+
+-- =========================================================================================== -=
+
 local pontuacaoText = display.newText("0",0,0)
 function exibirPontuacao()
     local options = 
     {
         text = scoreAtual,     
-        x = display.actualContentWidth/2-25,
-        y = 422,
+        x = display.actualContentWidth/5*2,
+        y = display.actualContentHeight/4*3-3,
         width = 130,
         font = native.systemFont,   
         fontSize = 20,
@@ -29,16 +29,18 @@ function incrementarScore()
 	scoreAtual = scoreAtual + 100
 	exibirPontuacao()
 end
+
 -- =========================================================================================== --
 
 function somarVidaPorColisao(event)
 	display.remove(event.target)
 	addFuel = nil
+
 	somarVida()
 end
 
 function somarVida ()
-	if (vidas < 5) then
+	if (vidas < 5 or vidas >=1) then
 		vidas = vidas +1
 		print("Ganhou uma Vida, sua quantidade de vidas agora é: => " .. vidas)
 		if(cenarioApagaLife.x <356)then
@@ -47,26 +49,26 @@ function somarVida ()
 	end
 end
 
-
-
 function gastarCombustivel() 
 	if (vidas >=1) then
-		cenarioApagaCombustivel.x = cenarioApagaCombustivel.x-0.1
+		cenarioApagaCombustivel.x = cenarioApagaCombustivel.x-0.2
 		if(cenarioApagaCombustivel.x <=280) then
 			cenarioApagaCombustivel.x = 360
 			perderVida()
+		
+
 		end
 
 	end
 end
 
-
 function morrerPorColisao(event)
+	
 		display.remove(event.other)
 		inimigo1 = nil
-		perderVida()				
+		perderVida()	
+	
 end
-
 
 function perderVida()
 	if (vidas >= 1) then
@@ -74,25 +76,67 @@ function perderVida()
 		print("Perdeu vida, suas vidas é: => " .. vidas)
 		cenarioApagaLife.x = cenarioApagaLife.x -15 
 		
-	else
-		
-		gameOver()
-	end
+		if (vidas == 0) then
+			gameOver()
+		end
+			end
 end
-
-
 
 function gameOver()
+	
 	print ("Game Over: Vidas => " ..  vidas)
 
-	botaoEsquerda = nil
-	botaoDireita = nil
-	botaoTiro = nil
-	display.remove(botaoEsquerda)
 	display.remove(botaoDireita)
+	display.remove(botaoEsquerda)
+	display.remove(botaoTiro)
+
+	display.remove(cenarioSuperior)
+	display.remove(cenarioInferior)
+	display.remove(cenarioPedra1)
+	display.remove(cenarioPedra2)
+	display.remove(cenarioPedra3)
+	
+	display.remove(cenarioApagaCombustivel)
+	
+	display.remove(cenarioApagaLife)
+	
+	display.remove(nave)
+	timer.cancel(desceCenario)
+	timer.cancel(geraFuel)
+	timer.cancel(gastaCombustivel)
+	timer.cancel(geraInimigo)
+
+	telaGameOver = display.newImage("telaGameOver.png",display.actualContentWidth/2,display.actualContentHeight/2)
+	
+	botaoSim = display.newImage("botaoSim.jpg", display.actualContentWidth/3, display.actualContentHeight/3*2)
+	botaoSim:addEventListener("touch", reiniciarJogo)
+	
+	botaoNao = display.newImage("botaoNao.jpg", display.actualContentWidth/3*2, display.actualContentHeight/3*2)
+	botaoNao:addEventListener("touch", limparTela)
+end
+
+
+function reiniciarJogo()
+	
+	display.remove(telaGameOver)
+	display.remove(botaoSim)
+	display.remove(botaoNao)
+
+	jogar()
+	
 
 end
 
+
+function limparTela()
+	
+	
+		display.remove(telaGameOver)
+		display.remove(botaoSim)
+		display.remove(botaoNao)
+
+	
+end
 
 
 -- =========================================================================================== --
@@ -100,7 +144,7 @@ end
 function moverNaveEsquerda(event)
 	if event.phase == "began" then
 		if nave.x > display.actualContentWidth/4  then
-		nave.x = nave.x - 10
+		nave.x = nave.x - 15
 		end
 	end
 end
@@ -108,7 +152,7 @@ end
 function moverNaveDireita(event)
 	if event.phase == "began" then
 		if nave.x < display.actualContentWidth/4*3  then
-			nave.x = nave.x + 10
+			nave.x = nave.x + 15
 		end
 	end
 end
@@ -121,7 +165,7 @@ function atirar(event)
 			tiro[contTiro] = display.newRect(nave.x,nave.y-25,5,3)
 			tiro[contTiro].id = contTiro
 			physics.addBody(tiro[contTiro])
-			tiro[contTiro]:setLinearVelocity(0,-100)
+			tiro[contTiro]:setLinearVelocity(0,-500)
 			tiro[contTiro]:addEventListener("collision", matarInimigo)
 	end
 end
@@ -135,14 +179,14 @@ end
 
 -- =========================================================================================== --
 
-
 function gerarFuel( )
-	addFuel = display.newImage("addFuel.png", math.random(70,250), math.random(-900,-100))
+	addFuel = display.newImage("addFuel.png", math.random(70,250), math.random(-900,-500))
 	physics.addBody(addFuel)
 	addFuel:addEventListener("collision", somarVidaPorColisao)
 	addFuel:setLinearVelocity(0,100)
 end
--- =========================================================================================== --
+
+
 
 function gerarInimigo()
 	--	inimigo4 = display.newImage("inimigo4.png", (math.random (70, 250)),(math.random (-900, -60)))
@@ -151,15 +195,16 @@ function gerarInimigo()
 	--	inimigo2a = display.newImage("inimigo2a.png", math.random (350, 950), math.random (0, 350))
 	--	inimigo3 = display.newImage("inimigo3.png",  -10 , math.random (0, 350))
 	--	inimigo3a = display.newImage("inimigo3a.png",  350 , math.random (0, 350))
-		inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),-50 )
+		inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),math.random(-400,-50) )
 		physics.addBody(inimigo1)
 		inimigo1:setLinearVelocity(0, 100)
 		--inimigo1:addEventListener("collision", morrerPorColisao)
 	end
+
 -- =========================================================================================== --
 
 function descerCenario()
-	cenarioSuperior.y = cenarioSuperior.y +1
+	cenarioSuperior.y = cenarioSuperior.y +1 
 	if(cenarioSuperior.y >= 400) then
 		cenarioSuperior.y = 50
 	end
@@ -167,11 +212,11 @@ function descerCenario()
 	if(cenarioPedra1.y >=450)then
 		mudarLadoX(cenarioPedra1)
 	end
-	cenarioPedra2.y = cenarioPedra2.y +1
+	cenarioPedra2.y = cenarioPedra2.y +1 
 	if(cenarioPedra2.y >=450)then
 		mudarLadoX(cenarioPedra2)
 	end
-	cenarioPedra3.y = cenarioPedra3.y +1
+	cenarioPedra3.y = cenarioPedra3.y +1 
 	if(cenarioPedra3.y >=450)then
 		mudarLadoX(cenarioPedra3)
 	end
@@ -186,9 +231,16 @@ function mudarLadoX(objeto)
 	end
 end
 
+-- =========================================================================================== --
+
+
+
+function jogar()
+vidas = 5
+scoreAtual = 0
 
 -- =========================================================================================== --
-deceCenario = timer.performWithDelay(10, descerCenario,0)
+desceCenario = timer.performWithDelay(10, descerCenario,0)
 geraInimigo = timer.performWithDelay(5000, gerarInimigo,0)
 geraFuel = timer.performWithDelay(5000, gerarFuel,0)
 gastaCombustivel = timer.performWithDelay(10, gastarCombustivel,0)
@@ -206,9 +258,11 @@ cenarioInferior = display.newImage("cenarioInferior.png",display.actualContentWi
 cenarioApagaCombustivel = display.newRect(360,428,80,8)
 cenarioApagaCombustivel:setFillColor( 01,0.5,0.5 )
 
-cenarioApagaLife = display.newRect(356,410,80,15)
+cenarioApagaLife = display.newRect(display.actualContentWidth*1.113,display.actualContentHeight/4*2.89,80,15)
 cenarioApagaLife:setFillColor(0,0,0)
 -- =========================================================================================== --
+
+
 
 
 -- =========================================================================================== --
@@ -221,6 +275,8 @@ botaoTiro:addEventListener("touch", atirar)
 -- =========================================================================================== --
 
 
+
+
 -- =========================================================================================== --
 nave = display.newImage("nave1.png", display.contentWidth/2, 380)
 physics.addBody(nave, "static")
@@ -228,3 +284,33 @@ nave:addEventListener("collision", morrerPorColisao)
 -- =========================================================================================== --
 
 
+end
+
+
+function iniciarJogo()
+	telaInicial = display.newImage("telaInicial.jpg", display.actualContentWidth/2, display.actualContentHeight/2.5 )
+
+
+	botaoSim = display.newImage("botaoSim.jpg", display.actualContentWidth/3, display.actualContentHeight/2)
+	botaoSim:addEventListener("touch", limpartelaJogar)
+	
+	botaoNao = display.newImage("botaoNao.jpg", display.actualContentWidth/3*2, display.actualContentHeight/2)
+	botaoNao:addEventListener("touch", limpartelaSair)
+end
+
+function limpartelaSair()
+
+	display.remove(telaInicial)
+	display.remove(botaoSim)
+	display.remove(botaoNao)
+
+end
+
+function limpartelaJogar()
+	display.remove(telaInicial)
+	display.remove(botaoSim)
+	display.remove(botaoNao)
+	jogar()
+end
+
+iniciarJogo()
