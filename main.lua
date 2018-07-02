@@ -129,13 +129,9 @@ end
 
 
 function limparTela()
-	
-	
 		display.remove(telaGameOver)
 		display.remove(botaoSim)
 		display.remove(botaoNao)
-
-	
 end
 
 
@@ -143,6 +139,9 @@ end
 
 function moverNaveEsquerda(event)
 	if event.phase == "began" then
+			moveAudio = audio.loadStream("move.wav")
+			audio.play(moveAudio)
+
 		if nave.x > display.actualContentWidth/4  then
 		nave.x = nave.x - 15
 		end
@@ -151,6 +150,9 @@ end
 
 function moverNaveDireita(event)
 	if event.phase == "began" then
+			moveAudio = audio.loadStream("move.wav")
+			audio.play(moveAudio)
+
 		if nave.x < display.actualContentWidth/4*3  then
 			nave.x = nave.x + 15
 		end
@@ -161,6 +163,8 @@ tiro = {}
 
 function atirar(event)
 		if event.phase == "began" then
+			shotAudio = audio.loadStream("shot.wav")
+			audio.play(shotAudio)
 			local contTiro = #tiro+1
 			tiro[contTiro] = display.newRect(nave.x,nave.y-25,5,3)
 			tiro[contTiro].id = contTiro
@@ -198,8 +202,7 @@ function gerarInimigo()
 		inimigo1 = display.newImage("inimigo1.png", (math.random (70, 250)),math.random(-400,-50) )
 		physics.addBody(inimigo1)
 		inimigo1:setLinearVelocity(0, 100)
-		--inimigo1:addEventListener("collision", morrerPorColisao)
-	end
+end
 
 -- =========================================================================================== --
 
@@ -313,4 +316,4 @@ function limpartelaJogar()
 	jogar()
 end
 
-iniciarJogo()
+jogar()
