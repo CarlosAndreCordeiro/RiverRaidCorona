@@ -78,10 +78,6 @@ function perderVida()
 		print("Perdeu vida, suas vidas é: => " .. vidas)
 		cenarioApagaLife.x = cenarioApagaLife.x -15 
 
-		liveDownAudio = audio.loadStream("liveDown.wav")
-		audio.play( liveDownAudio ) 
-
-
 		if (vidas == 0) then
 			gameOver()
 		end
@@ -123,6 +119,7 @@ end
 
 
 function reiniciarJogo()
+
 	
 	display.remove(telaGameOver)
 	display.remove(botaoSim)
@@ -259,7 +256,7 @@ scoreAtual = 0
 
 -- =========================================================================================== --
 desceCenario = timer.performWithDelay(10, descerCenario,0)
-geraInimigo = timer.performWithDelay(2000, gerarInimigo,0)
+geraInimigo = timer.performWithDelay(1500, gerarInimigo,0)
 geraFuel = timer.performWithDelay(7000, gerarFuel,0)
 gastaCombustivel = timer.performWithDelay(10, gastarCombustivel,0)
 -- =========================================================================================== --
@@ -308,20 +305,45 @@ end
 function iniciarJogo()
 
 
+
+	
 	introAudio = audio.loadStream("intro.mp3")
 	introAudio=audio.play( introAudio, { loops=-1 }  ) 
 
-	
+
 	
 	telaInicial = display.newImage("telaInicial.jpg", display.actualContentWidth/2, display.actualContentHeight/2.5 )
 
 
-	botaoSim = display.newImage("botaoSim.jpg", display.actualContentWidth/3, display.actualContentHeight/2)
+
+	botaoSim = display.newImage("botaoSim.jpg", display.actualContentWidth/3, display.actualContentHeight/4*1.5)
 	botaoSim:addEventListener("touch", limpartelaJogar)
 	
-	botaoNao = display.newImage("botaoNao.jpg", display.actualContentWidth/3*2, display.actualContentHeight/2)
+	botaoNao = display.newImage("botaoNao.jpg", display.actualContentWidth/3*2, display.actualContentHeight/4*1.5)
 	botaoNao:addEventListener("touch", limpartelaSair)
+
+	botaoMute = display.newImage("botaoMute.png", display.actualContentWidth/2, display.actualContentHeight/2.1)
+	botaoMute:addEventListener("touch", removerMusica)
+
+--	botaoSom = display.newImage("botaoSom.png", display.actualContentWidth/3, display.actualContentHeight/2.1)
+--	botaoSom:addEventListener("touch", tocarMusica)
+	
 end
+
+
+function removerMusica(event)
+	
+	audio.stop(introAudio)
+end
+
+
+function tocarMusica(event)
+	
+--	audio.play(introAudio)
+end
+
+
+
 
 function limpartelaSair()
 
@@ -329,6 +351,9 @@ function limpartelaSair()
 	display.remove(telaInicial)
 	display.remove(botaoSim)
 	display.remove(botaoNao)
+
+	display.remove(botaoMute)
+	display.remove(botaoSom)
 
 end
 
