@@ -35,6 +35,8 @@ end
 function somarVidaPorColisao(event)
 	display.remove(event.target)
 	addFuel = nil
+	liveUpAudio = audio.loadStream("liveUp.wav")
+	audio.play( liveUpAudio ) 
 
 	somarVida()
 end
@@ -75,7 +77,11 @@ function perderVida()
 		vidas = vidas-1
 		print("Perdeu vida, suas vidas é: => " .. vidas)
 		cenarioApagaLife.x = cenarioApagaLife.x -15 
-		
+
+		liveDownAudio = audio.loadStream("liveDown.wav")
+		audio.play( liveDownAudio ) 
+
+
 		if (vidas == 0) then
 			gameOver()
 		end
@@ -83,7 +89,7 @@ function perderVida()
 end
 
 function gameOver()
-	
+	audio.pause(introAudio)
 	print ("Game Over: Vidas => " ..  vidas)
 
 	display.remove(botaoDireita)
@@ -163,8 +169,10 @@ tiro = {}
 
 function atirar(event)
 		if event.phase == "began" then
-			shotAudio = audio.loadStream("shot.wav")
-			audio.play(shotAudio)
+			
+	shotAudio = audio.loadStream("shot.wav")
+	audio.play(shotAudio)
+	
 			local contTiro = #tiro+1
 			tiro[contTiro] = display.newRect(nave.x,nave.y-25,5,3)
 			tiro[contTiro].id = contTiro
@@ -175,6 +183,10 @@ function atirar(event)
 end
 
 function matarInimigo(event)
+
+	explodeAudio = audio.loadStream("explode.wav")
+	audio.play(explodeAudio)
+
 	display.remove(event.target)
 	display.remove(event.other)
 	inimigo1 = nil
@@ -242,10 +254,13 @@ function jogar()
 vidas = 5
 scoreAtual = 0
 
+
+
+
 -- =========================================================================================== --
 desceCenario = timer.performWithDelay(10, descerCenario,0)
-geraInimigo = timer.performWithDelay(5000, gerarInimigo,0)
-geraFuel = timer.performWithDelay(5000, gerarFuel,0)
+geraInimigo = timer.performWithDelay(2000, gerarInimigo,0)
+geraFuel = timer.performWithDelay(7000, gerarFuel,0)
 gastaCombustivel = timer.performWithDelay(10, gastarCombustivel,0)
 -- =========================================================================================== --
 
@@ -291,6 +306,13 @@ end
 
 
 function iniciarJogo()
+
+
+	introAudio = audio.loadStream("intro.mp3")
+	introAudio=audio.play( introAudio, { loops=-1 }  ) 
+
+	
+	
 	telaInicial = display.newImage("telaInicial.jpg", display.actualContentWidth/2, display.actualContentHeight/2.5 )
 
 
@@ -303,6 +325,7 @@ end
 
 function limpartelaSair()
 
+
 	display.remove(telaInicial)
 	display.remove(botaoSim)
 	display.remove(botaoNao)
@@ -310,10 +333,13 @@ function limpartelaSair()
 end
 
 function limpartelaJogar()
+
+
+
 	display.remove(telaInicial)
 	display.remove(botaoSim)
 	display.remove(botaoNao)
 	jogar()
 end
 
-jogar()
+iniciarJogo()
